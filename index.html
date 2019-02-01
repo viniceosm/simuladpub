@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
+
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,25 +9,34 @@
 </head>
 
 <style>
-* {
-	box-sizing: border-box;
-}
-#history {
-	margin-top: 10px;
-	height: 400px;
-	overflow: auto;
-}
-#history > div {
-	margin: 5px;
-	padding: 5px;
-}
+	* {
+		box-sizing: border-box;
+	}
+	body {
+		margin: 0;
+	}
+	#infos {
+		height: 10vh;
+	}
+	#history {
+		padding-top: 10px;
+		height: 90vh;
+		overflow: auto;
+		background: #d3d333;
+	}
+	#history>div {
+		margin: 5px;
+		padding: 5px;
+	}
 </style>
 
 <body>
-	<div>
-		<span id="spnPessoasPub"></span>/<span id="spnLimitePessoasPub"></span> pessoas
+	<div id="infos">
+		<div>
+			<span id="spnPessoasPub"></span>/<span id="spnLimitePessoasPub"></span> pessoas
+		</div>
+		<div>R$ <span id="spnDinheiroPub">0</span> no pub</div>
 	</div>
-	<div>R$ <span id="spnDinheiroPub">0</span> no pub</div>
 
 	<div id="history"></div>
 
@@ -87,7 +97,7 @@
 		loopCompra();
 
 		function entraSai() {
-			var demoraEntraSai = random(2000, 10 *1000);
+			var demoraEntraSai = random(2000, 10 * 1000);
 
 			setTimeout(function () {
 				var iEntraSai = random(0, 1);
@@ -102,7 +112,7 @@
 		}
 
 		function loopCompra() {
-			var demoraLoopCompra = random(3000, 10 *1000);
+			var demoraLoopCompra = random(3000, 10 * 1000);
 
 			setTimeout(function () {
 				var iProdutoComprar = random(0, produtos.length - 1);
@@ -183,4 +193,5 @@
 		}
 	</script>
 </body>
-</html>   
+
+</html>
