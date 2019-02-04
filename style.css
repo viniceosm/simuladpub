@@ -1,0 +1,53 @@
+* {
+	box-sizing: border-box;
+}
+body {
+	margin: 0;
+	font-family: 'Open Sans', sans-serif;
+}
+#infos {
+	height: 10vh;
+}
+#history {
+	padding-top: 10px;
+	height: 90vh;
+	overflow: auto;
+	background: #d3d333;
+}
+#history > div {
+	margin: 5px;
+	padding: 5px;
+}
+#btnHamb {
+	height: 50px;
+	width: 50px;
+	background: #d3d333;
+	float: right;
+}
+#btnHamb img {
+	margin: auto;
+	display: block;
+	padding-top: 15px;
+}
+
+@media (min-width: 576px) {
+	/* For tablets: */
+	#btnHamb {
+		height: 20px;
+		width: 20px;
+	}
+	#btnHamb img {
+		padding-top: 2px;
+	}
+}
+
+@media (min-width: 992px) {
+	/* For desktop: */
+	#btnHamb {
+		height: 20px;
+		width: 20px;
+	}
+	#btnHamb img {
+		padding-top: 2px;
+	}
+}
