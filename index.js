@@ -5,7 +5,7 @@ var nomes = [
 	'Michael'
 ];
 
-var nLimitePessoasPub = nomes.length;
+var nLimitePessoasPub = 24;
 var dinheiroPub = 0;
 
 var pessoas = [];
@@ -48,6 +48,16 @@ var $html = (id, val) => document.getElementById(id).innerHTML = val;
 var $append = (id, val) => document.getElementById(id).innerHTML = '<div>' + val + '</div>' + document.getElementById(id).innerHTML;
 
 $html('spnLimitePessoasPub', nLimitePessoasPub);
+
+document.getElementById('btnHamb').addEventListener('click', function () {
+	if (document.getElementById('history').style.display == 'none') {
+		document.getElementById('history').style.display = '';
+		document.getElementById('areaCanvas').style.display = 'none';
+	} else {
+		document.getElementById('areaCanvas').style.display = '';
+		document.getElementById('history').style.display = 'none';
+	}
+});
 
 entraPessoaPub(); // começa entrando xD
 entraSai();
@@ -147,4 +157,83 @@ function removeRandomPessoa() {
 	pessoas.splice(iPessoaRemover, 1);
 	pessoasNomes.splice(iPessoaRemover, 1);
 	$html('spnPessoasPub', pessoas.length);
+}
+
+montaCanvas();
+
+function montaCanvas() {
+	// quadrados = 10px x 10px
+	// grid canvas 130 x 18
+	// canvas tera 130px x 180px
+
+	porta();
+	caixa();
+	balcao();
+
+	mesa(4, 11);
+	mesa(7, 11);
+	mesa(10, 11);
+	mesa(4, 14);
+	mesa(7, 14);
+	mesa(10, 14);
+
+	var pessoasCanvas = [];
+
+	// faz a fila xD
+	for (var i = 5; i <= 16; i++)
+		pessoasCanvas.push({x: 1, y: i});
+
+	// coloca 4 numa mesa
+	pessoasCanvas.push({x: 3, y: 11});
+	pessoasCanvas.push({x: 4, y: 10});
+	pessoasCanvas.push({x: 5, y: 11});
+	pessoasCanvas.push({x: 4, y: 12});
+
+	for (var pessoa of pessoasCanvas)
+		pessoa(pessoa.x, pessoa.y);
+}
+
+
+
+function porta() {
+	pintaCoord(0, 0, 'brown');
+	pintaCoord(0, 1, 'brown');
+}
+
+function pessoa(x, y) {
+	pintaCoord(x, y);
+}
+function mesa(x, y) {
+	pintaCoord(x, y, 'brown');
+}
+function balcao() {
+	pintaCoord(12, 6, 'brown');
+	pintaCoord(12, 7, 'brown');
+	pintaCoord(12, 8, 'brown');
+	pintaCoord(12, 9, 'brown');
+}
+
+function caixa() {
+	pintaCoord(0, 4, 'green');
+	pintaCoord(1, 4, 'green');
+	pintaCoord(2, 4, 'green');
+}
+
+function pintaCoord (x, y, cor = 'black') {
+	var [ wQuad, hQuad ] = [10, 10];
+
+	var c = document.getElementById("myCanvas");
+	var ctx = c.getContext("2d");
+
+	ctx.fillStyle = cor;
+	ctx.fillRect(x * wQuad, y * hQuad, wQuad, hQuad);
+
+	// ctx.font = "14px Arial";
+	// ctx.fillText("@", 10, 50);
+}
+
+function limpaCanvas () {
+	var c = document.getElementById("myCanvas");
+	var context = c.getContext("2d");
+	context.clearRect(0, 0, canvas.width, canvas.height);
 }
