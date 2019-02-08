@@ -225,6 +225,19 @@ async function removeRandomPessoa() {
 		var pessoaRemover = pessoas.find(p => p.id == pessoasSentadas[iPessoaSentadaRemover].id);
 		var iPessoaRemover = pessoas.findIndex(p => p.id == pessoaRemover.id);
 
+		var cadeiraLiberar = {
+			coords: {
+				x: pessoaRemover.coords.x,
+				y: pessoaRemover.coords.y
+			}
+		};
+
+		cadeiraLiberar = cadeirasMesas.find(cm => cm.coords.x == cadeiraLiberar.coords.x && cm.coords.y == cadeiraLiberar.coords.y);
+
+		if (cadeiraLiberar) {
+			cadeiraLiberar.livre = true;
+		}
+
 		await caminhaPara(pessoaRemover, { coords: {x: 6, y: 7} });
 
 		for (var i = 0; i < 7; i++) {
