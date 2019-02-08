@@ -11,21 +11,21 @@ var dinheiroPub = 0;
 var pessoas = [];
 var pessoasNomes = [];
 var mesas = [
-	{ x: 4, y: 11 },
-	{ x: 7, y: 11 },
-	{ x: 10, y: 11 },
-	{ x: 4, y: 14 },
-	{ x: 7, y: 14 },
-	{ x: 10, y: 14 }
+	{ coords: { x: 4, y: 11 } },
+	{ coords: { x: 7, y: 11 } },
+	{ coords: { x: 10, y: 11 } },
+	{ coords: { x: 4, y: 14 } },
+	{ coords: { x: 7, y: 14 } },
+	{ coords: { x: 10, y: 14  }}
 ];
 
 var cadeirasMesas = [];
 
 for (var mesa of mesas) {
-	cadeirasMesas.push({ x: mesa.x, y: mesa.y - 1, livre: true });
-	cadeirasMesas.push({ x: mesa.x, y: mesa.y + 1, livre: true });
-	cadeirasMesas.push({ x: mesa.x + 1, y: mesa.y, livre: true });
-	cadeirasMesas.push({ x: mesa.x - 1, y: mesa.y, livre: true });
+	cadeirasMesas.push({ coords: { x: mesa.coords.x, y: mesa.coords.y - 1 }, livre: true });
+	cadeirasMesas.push({ coords: { x: mesa.coords.x, y: mesa.coords.y + 1 }, livre: true });
+	cadeirasMesas.push({ coords: { x: mesa.coords.x + 1, y: mesa.coords.y }, livre: true });
+	cadeirasMesas.push({ coords: { x: mesa.coords.x - 1, y: mesa.coords.y }, livre: true });
 }
 
 var produtos = [
@@ -195,25 +195,10 @@ function addRandomPessoa() {
 
 		if (cadeiraDisponivel !== undefined) {
 			cadeiraDisponivel.livre = false;
-		}
 
-		if (cadeiraDisponivel.x !== undefined && cadeiraDisponivel.y !== undefined) {
-			while (pessoaAdicionada.coords.y !== cadeiraDisponivel.y) {
-				andaBaixo(pessoaAdicionada);
-				await delay(500);
-			};
-
-			while (pessoaAdicionada.coords.x !== cadeiraDisponivel.x) {
-				if (pessoaAdicionada.coords.x < cadeiraDisponivel.x) {
-					andaDireita(pessoaAdicionada);
-				} else {
-					andaEsquerda(pessoaAdicionada);
-				}
-
-				await delay(500);
-			};
-
-			pessoaAdicionada.sentou = true;
+			caminhaPara(pessoaAdicionada, cadeiraDisponivel, function() {
+				pessoaAdicionada.sentou = true;
+			});
 		}
 	})();
 
@@ -232,6 +217,32 @@ function removeRandomPessoa() {
 	$html('spnPessoasPub', pessoas.length);
 }
 
+async function caminhaPara (objeto, destino, cb) {
+	if (destino.coords.x !== undefined && destino.coords.y !== undefined) {
+		while (objeto.coords.y !== destino.coords.y) {
+			if (objeto.coords.y < destino.coords.y) {
+				andaBaixo(objeto);
+			} else {
+				andaCima(objeto);
+			}
+
+			await delay(500);
+		};
+
+		while (objeto.coords.x !== destino.coords.x) {
+			if (objeto.coords.x < destino.coords.x) {
+				andaDireita(objeto);
+			} else {
+				andaEsquerda(objeto);
+			}
+
+			await delay(500);
+		};
+
+		cb();
+	}
+}
+
 function montaCanvas() {
 	// quadrados = 10px x 10px
 	// grid canvas 130 x 18
@@ -244,7 +255,7 @@ function montaCanvas() {
 	desenhaBalcao();
 
 	for (var mesaCanvas of mesas) {
-		desenhaMesa(mesaCanvas.x, mesaCanvas.y);
+		desenhaMesa(mesaCanvas.coords.x, mesaCanvas.coords.y);
 	}
 
 	for (var pessoaCanvas of pessoas) {
