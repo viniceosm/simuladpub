@@ -8,7 +8,14 @@ var nomes = [
 var nLimitePessoasPub = 24;
 var dinheiroPub = 0;
 
+var velocidadeAnimacao = 100;
+var valocidadeEntraSai = {
+	min: 200,
+	max: 10 * 100
+};
+
 var pessoas = [];
+var maxIdGerado = 0;
 var pessoasNomes = [];
 var mesas = [
 	{ coords: { x: 4, y: 11 } },
@@ -89,10 +96,10 @@ loopCompra();
 
 var loopMontaCanvas = setInterval(function () {
 	montaCanvas();
-}, 100);
+}, 10);
 
 function entraSai() {
-	var demoraEntraSai = random(2000, 10 * 1000);
+	var demoraEntraSai = random(valocidadeEntraSai.min, valocidadeEntraSai.max);
 
 	setTimeout(function () {
 		var iEntraSai = random(0, 1);
@@ -168,7 +175,10 @@ function addRandomPessoa() {
 
 	var usaApp = !random(0, 1);
 
+	maxIdGerado++;
+
 	var pessoaAdicionada = {
+		id: maxIdGerado,
 		nome,
 		dinheiro,
 		tentouComprar: false,
@@ -184,11 +194,11 @@ function addRandomPessoa() {
 		// vai até o meio do pub pra dps fazer o calculo em que mesa ele vai
 		for (var i = 0; i < 5; i++) {
 			andaDireita(pessoaAdicionada);
-			await delay(500);
+			await delay(velocidadeAnimacao);
 		}
 		for (var i = 0; i < 6; i++) {
 			andaBaixo(pessoaAdicionada);
-			await delay(500);
+			await delay(velocidadeAnimacao);
 		}
 
 		var cadeiraDisponivel = cadeirasMesas.filter(cm => cm.livre == true)[0];
@@ -196,9 +206,9 @@ function addRandomPessoa() {
 		if (cadeiraDisponivel !== undefined) {
 			cadeiraDisponivel.livre = false;
 
-			caminhaPara(pessoaAdicionada, cadeiraDisponivel, function() {
-				pessoaAdicionada.sentou = true;
-			});
+			await caminhaPara(pessoaAdicionada, cadeiraDisponivel);
+
+			pessoaAdicionada.sentou = true;
 		}
 	})();
 
@@ -206,41 +216,60 @@ function addRandomPessoa() {
 	$append('history', nome + ' entrou.');
 }
 
-function removeRandomPessoa() {
+async function removeRandomPessoa() {
 	var pessoasSentadas = pessoas.filter(cm => cm.sentou == true);
 
-	var iPessoaRemover = random(0, pessoasSentadas.length - 1);
+	if (pessoasSentadas.length > 0) {
+		var iPessoaSentadaRemover = random(0, pessoasSentadas.length - 1);
 
-	$append('history', pessoas[iPessoaRemover].nome + ' saiu.');
-	pessoas.splice(iPessoaRemover, 1);
-	pessoasNomes.splice(iPessoaRemover, 1);
-	$html('spnPessoasPub', pessoas.length);
+		var pessoaRemover = pessoas.find(p => p.id == pessoasSentadas[iPessoaSentadaRemover].id);
+		var iPessoaRemover = pessoas.findIndex(p => p.id == pessoaRemover.id);
+
+		await caminhaPara(pessoaRemover, { coords: {x: 6, y: 7} });
+
+		for (var i = 0; i < 7; i++) {
+			andaCima(pessoaRemover);
+			await delay(velocidadeAnimacao);
+		}
+		for (var i = 0; i < 5; i++) {
+			andaEsquerda(pessoaRemover);
+			await delay(velocidadeAnimacao);
+		}
+
+		$append('history', pessoaRemover.nome + ' saiu.');
+		pessoas.splice(iPessoaRemover, 1);
+		pessoasNomes.splice(iPessoaRemover, 1);
+		console.log('removeu cara')
+		$html('spnPessoasPub', pessoas.length);
+	}
 }
 
 async function caminhaPara (objeto, destino, cb) {
-	if (destino.coords.x !== undefined && destino.coords.y !== undefined) {
-		while (objeto.coords.y !== destino.coords.y) {
-			if (objeto.coords.y < destino.coords.y) {
-				andaBaixo(objeto);
-			} else {
-				andaCima(objeto);
-			}
+	return new Promise(async (resolve) => {
+		if (destino.coords.x !== undefined && destino.coords.y !== undefined) {
+			while (objeto.coords.y !== destino.coords.y) {
+				if (objeto.coords.y < destino.coords.y) {
+					andaBaixo(objeto);
+				} else {
+					andaCima(objeto);
+				}
 
-			await delay(500);
-		};
+				await delay(velocidadeAnimacao);
+			};
 
-		while (objeto.coords.x !== destino.coords.x) {
-			if (objeto.coords.x < destino.coords.x) {
-				andaDireita(objeto);
-			} else {
-				andaEsquerda(objeto);
-			}
+			while (objeto.coords.x !== destino.coords.x) {
+				if (objeto.coords.x < destino.coords.x) {
+					andaDireita(objeto);
+				} else {
+					andaEsquerda(objeto);
+				}
 
-			await delay(500);
-		};
+				await delay(velocidadeAnimacao);
+			};
 
-		cb();
-	}
+			resolve();
+		}
+	});
 }
 
 function montaCanvas() {
