@@ -201,7 +201,8 @@ function addRandomPessoa() {
 			await delay(velocidadeAnimacao);
 		}
 
-		var cadeiraDisponivel = cadeirasMesas.filter(cm => cm.livre == true)[0];
+		var cadeiraDisponivel = cadeirasMesas.filter(cm => cm.livre == true);
+		cadeiraDisponivel = cadeiraDisponivel[random(0, cadeiraDisponivel.length)];
 
 		if (cadeiraDisponivel !== undefined) {
 			cadeiraDisponivel.livre = false;
@@ -209,6 +210,21 @@ function addRandomPessoa() {
 			await caminhaPara(pessoaAdicionada, cadeiraDisponivel);
 
 			pessoaAdicionada.sentou = true;
+		} else {
+			var loopProcuraCadeiraDisponivel = setInterval(async function () {
+				var cadeiraDisponivel = cadeirasMesas.filter(cm => cm.livre == true);
+				cadeiraDisponivel = cadeiraDisponivel[random(0, cadeiraDisponivel.length)];
+
+				if (cadeiraDisponivel !== undefined) {
+					clearInterval(loopProcuraCadeiraDisponivel);
+
+					cadeiraDisponivel.livre = false;
+
+					await caminhaPara(pessoaAdicionada, cadeiraDisponivel);
+
+					pessoaAdicionada.sentou = true;
+				}
+			}, 100);
 		}
 	})();
 
