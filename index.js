@@ -114,7 +114,7 @@ function entraSai() {
 }
 
 function loopCompra() {
-	var demoraLoopCompra = random(3000, 10 * 1000);
+	var demoraLoopCompra = random(300, 10 * 100);
 
 	setTimeout(function () {
 		var pessoasSentadas = pessoas.filter(cm => cm.sentou == true);
